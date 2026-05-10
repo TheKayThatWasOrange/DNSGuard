@@ -26,7 +26,7 @@ def main(preferred_servers: list[str]):
     """
     for i, server in enumerate(preferred_servers):
         # Strip commas and anything else that isn't
-        # part of an IPv$ address.
+        # part of an IPv4 address.
         preferred_servers[i] = re.sub(r"[^0-9\.]", "", server)
         if not IS_IP_ADDRESS.match(preferred_servers[i]):
             print(f"'{preferred_servers[i]}' is not an IPv4 address.")

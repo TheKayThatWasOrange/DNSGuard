@@ -1,2 +1,2 @@
 def main() -> None:
-    print("Rick and Morty aren't funny, you're just really autistic.")
+    print("Rick and Morty isn't funny, you're just really autistic.")
