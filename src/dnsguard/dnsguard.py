@@ -14,6 +14,8 @@ def main():
         store, dns_related_keys, None
     ):
         # dispatch_queue_create() does not seem to be usable at all.
+        # Grab the main queue instead since we don't actually have
+        # anything better to do.
         dispatch_queue = dispatch.dispatch_get_main_queue()
 
         if SystemConfiguration.SCDynamicStoreSetDispatchQueue(store, dispatch_queue):

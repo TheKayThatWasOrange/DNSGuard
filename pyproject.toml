@@ -1,9 +1,10 @@
 [project]
-name = "dns"
+name = "dnsguard"
 version = "0.1.0"
 description = "You Know We Some Motherfuckaz"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "pyinstaller>=6.20.0",
     "pyobjc>=12.1",
 ]
