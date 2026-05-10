@@ -9,12 +9,27 @@ from rich import print
 DNS_KEY_PATTERN = ".*DNS"
 IS_IP_ADDRESS = re.compile(r"^(((?!25?[6-9])[12]\d|[1-9])?\d\.?\b){4}$", re.IGNORECASE)
 
+app = typer.Typer(pretty_exceptions_show_locals=True)
 
+
+@app.command()
 def main(preferred_servers: list[str]):
+    """
+    Pass a list of IPv4 addresses for the nameservers
+    you would like MacOS to use on EVERY network interface without question.
+    If you're the one person in the world who cares about IPv6 then you
+    can go ahead and add that to the regex. NAT won a long, long time ago.
 
-    for server in preferred_servers:
-        if not IS_IP_ADDRESS.match(server):
-            print(f"'{server}' is not an IPv4 address.")
+    Example:
+
+        dnsguard 192.168.1.2, 9.9.9.9, 1.1.1.1
+    """
+    for i, server in enumerate(preferred_servers):
+        # Strip commas and anything else that isn't
+        # part of an IPv$ address.
+        preferred_servers[i] = re.sub(r"[^0-9\.]", "", server)
+        if not IS_IP_ADDRESS.match(preferred_servers[i]):
+            print(f"'{preferred_servers[i]}' is not an IPv4 address.")
             raise typer.Abort()
 
     valid_servers = OrderedSet(preferred_servers)
@@ -73,4 +88,4 @@ def main(preferred_servers: list[str]):
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    app()
