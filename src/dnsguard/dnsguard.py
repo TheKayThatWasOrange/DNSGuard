@@ -6,6 +6,7 @@ from ordered_set import OrderedSet
 from PyObjCTools import AppHelper
 from rich import print
 
+DNS_KEY_PATTERN = ".*DNS"
 IS_IP_ADDRESS = re.compile(r"^(((?!25?[6-9])[12]\d|[1-9])?\d\.?\b){4}$", re.IGNORECASE)
 
 
@@ -18,7 +19,7 @@ def main(preferred_servers: list[str]):
 
     valid_servers = OrderedSet(preferred_servers)
 
-    def config_callback(store, keys, context=None):
+    def compliance_enforcer(store, keys, context=None):
         for key in keys:
             value = SystemConfiguration.SCDynamicStoreCopyValue(store, key)
 
@@ -39,28 +40,36 @@ def main(preferred_servers: list[str]):
                 pass
 
     store = SystemConfiguration.SCDynamicStoreCreate(
-        None, "DNSGuard", config_callback, None
+        None, "DNSGuard", compliance_enforcer, None
     )
 
-    dns_related_keys = SystemConfiguration.SCDynamicStoreCopyKeyList(store, ".*DNS")
+    dns_related_keys = SystemConfiguration.SCDynamicStoreCopyKeyList(
+        store, DNS_KEY_PATTERN
+    )
 
     # Manually fire the callback once to pick up any non-compliance
     # without waiting around for something to change.
-    config_callback(store, dns_related_keys)
+    compliance_enforcer(store, dns_related_keys)
 
-    # Then start watching those same keys for future changes.
+    # Then start watching all present (and future) keys for changes.
     if SystemConfiguration.SCDynamicStoreSetNotificationKeys(
-        store, dns_related_keys, None
+        store, None, [DNS_KEY_PATTERN]
     ):
         # dispatch_queue_create() does not seem to be usable at all.
         # Grab the main queue instead since we don't actually have
-        # anything better to do.
+        # anything better to do in our run loop.
         dispatch_queue = dispatch.dispatch_get_main_queue()
 
         if SystemConfiguration.SCDynamicStoreSetDispatchQueue(store, dispatch_queue):
             print("Watching the store for changes...")
             # This handles keyboard input. dispatch_main() does not.
             AppHelper.runConsoleEventLoop(installInterrupt=True)
+        else:
+            print("What the hell, man?")
+            raise typer.Abort()
+    else:
+        print("Couldn't set notification keys.")
+        raise typer.Abort()
 
 
 if __name__ == "__main__":
