@@ -1,0 +1,9 @@
+[project]
+name = "dns"
+version = "0.1.0"
+description = "You Know We Some Motherfuckaz"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pyobjc>=12.1",
+]
