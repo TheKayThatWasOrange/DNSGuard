@@ -50,8 +50,9 @@ def main(preferred_servers: list[str]):
         # part of an IPv4 address.
         preferred_servers[i] = re.sub(r"[^0-9.]", "", server)
         if not IS_IP_ADDRESS.match(preferred_servers[i]):
-            print(f"[red]'{preferred_servers[i]}' is not an IPv4 address.[/red]")
-            raise typer.Abort()
+            raise typer.BadParameter(
+                f"Sanitized value '{preferred_servers[i]}' is not a valid IPv4 address."
+            )
 
     valid_servers = OrderedSet(preferred_servers)
 
