@@ -10,4 +10,14 @@ This will *definitely* leave your System Settings UI out of sync and there is tr
 
 Apple has recently exposed a new app extension interface which lets you write your own DNS Proxy capable of diverting all DNS traffic to one specific location. This would probably be a much better way of accomplishing things than my approach here, but you can't even build a DNS Proxy extension without joining their paid developer program so fuck them.
 
-This might not actually require Python 3.13, that's just all I've tested it on because I'm too lazy to keep up with what the cool kids are doing with their trendy Rust editors that don't work at all without Node for some reason. 
+This might not actually require Python 3.11.10, that's just all I've tested it on because I'm too lazy to keep up with what the cool kids are doing with their trendy Rust editors that don't work at all without Node for some reason.
+
+If you'd rather not clone anything: 
+
+```
+pip install https://raw.githubusercontent.com/TheKayThatWasOrange/DNSGuard/master/dist/dnsguard-0.1.0-py3-none-any.whl
+```
+
+Otherwise, clone and `uv build`. 
+
+

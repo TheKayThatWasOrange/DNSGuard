@@ -3,7 +3,7 @@ name = "dnsguard"
 version = "0.1.0"
 description = "Fuck Apple"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11.10"
 dependencies = [
     "ordered-set>=4.1.0",
     "pyobjc>=12.1",
