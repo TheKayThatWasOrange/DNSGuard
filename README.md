@@ -22,7 +22,7 @@ This will *definitely* leave your **System Settings** UI out of sync and there i
 
 This might not actually require Python 3.11.10, that's just all I've tested it on because I'm too lazy to keep up with what the cool kids are doing with their trendy Rust editors that don't work at all without Node for some reason. I'm also not installing Tahoe for any amount of money. Y'all can miss me with that noise.
 
-If you'd rather not clone anything: 
+If you'd rather not clone anything and you still trust random assholes on the internet for some reason: 
 
 ```
 pip install https://raw.githubusercontent.com/TheKayThatWasOrange/DNSGuard/master/dist/dnsguard-0.1.0-py3-none-any.whl
