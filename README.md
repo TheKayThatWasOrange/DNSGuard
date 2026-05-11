@@ -26,4 +26,10 @@ Otherwise, clone and `uv build`.
 
 Note that `pyobjc` is **HUGE**
 
+# Usage
+
+This stupid trick only works with escalated privileges. Sorry.
+
+`sudo dnsguard 192.168.1.2, 9.9.9.9, 1.1.1.1`
+
 
