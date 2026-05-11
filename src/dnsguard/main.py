@@ -23,6 +23,12 @@ app = typer.Typer(pretty_exceptions_show_locals=True)
 class SCException(RuntimeError):
     pass
 
+def dump_sc_error() -> str:
+    error = SystemConfiguration.SCError()
+    error_string = SystemConfiguration.SCErrorString(error)
+    return error_string
+
+
 @app.command()
 def main(preferred_servers: list[str]):
     """
@@ -79,9 +85,7 @@ def main(preferred_servers: list[str]):
                 else:
                     print(f"[green]{key} is in compliance.[/green]")
             except SCException:
-                error = SystemConfiguration.SCError()
-                error_string = SystemConfiguration.SCErrorString(error)
-                print(f"[red]\n\nOPERATION FAILED: {error_string}[/red]\n\n")
+                print(f"[red]\n\nOPERATION FAILED: {dump_sc_error()}[/red]\n\n")
             except AttributeError:
                 # Apple doesn't like to follow their own schemas and
                 # there are always at least two outliers which have
@@ -117,10 +121,10 @@ def main(preferred_servers: list[str]):
             # This handles keyboard input. dispatch_main() does not.
             AppHelper.runConsoleEventLoop(installInterrupt=True)
         else:
-            print("What the hell, man?")
+            print(dump_sc_error())
             raise typer.Abort()
     else:
-        print("Couldn't set notification keys.")
+        print(dump_sc_error())
         raise typer.Abort()
 
 
