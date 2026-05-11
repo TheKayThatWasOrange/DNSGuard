@@ -9,6 +9,13 @@ from rich import print
 DNS_KEY_PATTERN = ".*DNS"
 IS_IP_ADDRESS = re.compile(r"^(((?!25?[6-9])[12]\d|[1-9])?\d\.?\b){4}$", re.IGNORECASE)
 
+SINGLE_SERVER_KEY = "ServerAddress"
+SERVERS_KEY = "ServerAddresses"
+
+# I have no idea what these are for but they aren't
+# useful dictionaries.
+KEYS_TO_IGNORE = ("State:/Network/MulticastDNS", "State:/Network/PrivateDNS")
+
 app = typer.Typer(pretty_exceptions_show_locals=True)
 
 class SCException(RuntimeError):
@@ -27,6 +34,10 @@ def main(preferred_servers: list[str]):
         sudo dnsguard 192.168.1.2, 9.9.9.9, 1.1.1.1
     """
     for i, server in enumerate(preferred_servers):
+        # Typer doesn't offer much in the way of input validation
+        # and it wants lists to be space-delimited, which is hard
+        # to read.
+
         # Strip commas and anything else that isn't
         # part of an IPv4 address.
         preferred_servers[i] = re.sub(r"[^0-9\.]", "", server)
@@ -38,13 +49,17 @@ def main(preferred_servers: list[str]):
 
     def compliance_enforcer(store, keys, context=None):
         for key in keys:
+            # Don't care about everything
+            if key in KEYS_TO_IGNORE:
+                continue
+
             value = SystemConfiguration.SCDynamicStoreCopyValue(store, key)
 
             try:
-                stored_servers = value.get("ServerAddresses", None)
+                stored_servers = value.get(SERVERS_KEY, None)
 
                 if stored_servers is None:
-                    stored_servers = [value.get("ServerAddress", None)]
+                    stored_servers = [value.get(SINGLE_SERVER_KEY, None)]
 
                 if set(stored_servers) != valid_servers:
                     print(
@@ -52,8 +67,8 @@ def main(preferred_servers: list[str]):
                     )
 
                     new_value = dict(value)
-                    new_value.pop("ServerAddress", None)
-                    new_value["ServerAddresses"] = list(valid_servers)
+                    new_value.pop(SINGLE_SERVER_KEY, None)
+                    new_value[SERVERS_KEY] = list(valid_servers)
 
                     if not SystemConfiguration.SCDynamicStoreSetValue(
                         store, key, new_value
@@ -66,6 +81,9 @@ def main(preferred_servers: list[str]):
                 error_string = SystemConfiguration.SCErrorString(error)
                 print(f"[red]\n\nFAILED: {error_string}[/red]\n\n")
             except AttributeError:
+                # Apple doesn't like to follow their own schemas and
+                # there are always at least two outliers which have
+                # no meaningful impact on anything that I can tell.
                 print(
                     f"[yellow]{key} cannot be verified and is probably irrelevant.[/yellow]"
                 )
