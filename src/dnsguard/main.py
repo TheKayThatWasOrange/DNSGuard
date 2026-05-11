@@ -81,7 +81,7 @@ def main(preferred_servers: list[str]):
             except SCException:
                 error = SystemConfiguration.SCError()
                 error_string = SystemConfiguration.SCErrorString(error)
-                print(f"[red]\n\nFAILED: {error_string}[/red]\n\n")
+                print(f"[red]\n\nOPERATION FAILED: {error_string}[/red]\n\n")
             except AttributeError:
                 # Apple doesn't like to follow their own schemas and
                 # there are always at least two outliers which have
