@@ -24,7 +24,7 @@ pip install https://raw.githubusercontent.com/TheKayThatWasOrange/DNSGuard/maste
 
 Otherwise, clone and `uv build`. 
 
-Note that `pyobjc` is **HUGE**. There's probably a way to only drag in the modules you care about but I couldn't get it to work and gave up. 
+Note that `pyobjc` is **HUGE**.
 
 # Usage
 

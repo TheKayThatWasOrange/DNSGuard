@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.11.10"
 dependencies = [
     "ordered-set>=4.1.0",
-    "pyobjc>=12.1",
+    "pyobjc-core>=12.1",
+    "pyobjc-framework-libdispatch>=12.1",
+    "pyobjc-framework-systemconfiguration>=12.1",
     "typer>=0.25.1",
 ]
 
