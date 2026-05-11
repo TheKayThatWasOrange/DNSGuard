@@ -11,6 +11,8 @@ IS_IP_ADDRESS = re.compile(r"^(((?!25?[6-9])[12]\d|[1-9])?\d\.?\b){4}$", re.IGNO
 
 app = typer.Typer(pretty_exceptions_show_locals=True)
 
+class SCException(RuntimeError):
+    pass
 
 @app.command()
 def main(preferred_servers: list[str]):
@@ -22,7 +24,7 @@ def main(preferred_servers: list[str]):
 
     Example:
 
-        dnsguard 192.168.1.2, 9.9.9.9, 1.1.1.1
+        sudo dnsguard 192.168.1.2, 9.9.9.9, 1.1.1.1
     """
     for i, server in enumerate(preferred_servers):
         # Strip commas and anything else that isn't
@@ -45,10 +47,25 @@ def main(preferred_servers: list[str]):
                     stored_servers = [value.get("ServerAddress", None)]
 
                 if set(stored_servers) != valid_servers:
-                    print(f"[red]{key}: {stored_servers} != {valid_servers}[/red]")
+                    print(
+                        f"[red]{key}: {tuple(stored_servers)} != {tuple(valid_servers)}[/red]"
+                    )
+
+                    new_value = dict(value)
+                    new_value.pop("ServerAddress", None)
+                    new_value["ServerAddresses"] = list(valid_servers)
+
+                    if not SystemConfiguration.SCDynamicStoreSetValue(
+                        store, key, new_value
+                    ):
+                        raise SCException()
                 else:
                     print(f"[green]{key} is in compliance.[/green]")
-            except Exception:
+            except SCException:
+                error = SystemConfiguration.SCError()
+                error_string = SystemConfiguration.SCErrorString(error)
+                print(f"[red]\n\nFAILED: {error_string}[/red]\n\n")
+            except AttributeError:
                 print(
                     f"[yellow]{key} cannot be verified and is probably irrelevant.[/yellow]"
                 )
