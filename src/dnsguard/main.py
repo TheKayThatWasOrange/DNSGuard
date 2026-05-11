@@ -121,10 +121,10 @@ def main(preferred_servers: list[str]):
             # This handles keyboard input. dispatch_main() does not.
             AppHelper.runConsoleEventLoop(installInterrupt=True)
         else:
-            print(dump_sc_error())
+            print(f"[red]{dump_sc_error()}[/red]")
             raise typer.Abort()
     else:
-        print(dump_sc_error())
+        print(f"[red]{dump_sc_error()}[/red]")
         raise typer.Abort()
 
 
