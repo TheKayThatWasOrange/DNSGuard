@@ -2,8 +2,9 @@
 
 Most operating systems with TCP/IP support baked right into the crust realize that DNS is of such critical importance to everything else in the stack that a single, unambiguous source of truth is a hard requirement for keeping track of name resolvers. Almost 30 years ago, some lonely little boy with a chip on his shoulder at Apple decided that this wasn't complicated enough so he invented the "System Configuration" K/V store which curates a potentially endless number of sources of truth in an extremely opaque, poorly-documented way, clumsily backporting its many conflicting, concurrent states into `/etc/resolv.conf` for compatibility with all the tools that do not give a shit what Apple thinks is shippable.
 
-![Sperg Trek: The NeXT Generation](/dist/applebraintrust.jpg)
-> A typical engineering conversation at Apple in 1999 often involved multiple fat people spitting food all over you while they told you how stupid you were for not liking everything they did. 
+|  | ![Sperg Trek: The NeXT Generation](/dist/applebraintrust.jpg) |  |
+| --- | :---: | --- |
+| ![Trickery](/dist/space.gif) | <sub>*A typical engineering conversation at Apple in 1999 often involved multiple fat people spitting food all over you while they told you how stupid you were for not liking every single thing they ever did.*</sub> | ![Trickery](/dist/space.gif) | 
 
 The results of this architectural choice have yielded no tangible benefit to anyone, anywhere, but the design persists to this day because nobody else wants to go near that butthurt little boy's bullshit-ass code. Things being what they are, you can frequently find yourself in frustrating situations where something resolves in Safari but not in Chrome. Or maybe it resolves in Chrome but not Safari. Or maybe it resolves in Chrome *and* Safari but not in `dig`. Or maybe it resolves everywhere perfectly and then you connect to a VPN and suddenly link-local names break even though the routing table looks perfectly fine and System Settings shows you the expected resolver addresses in its UI. All this turmoil because of one boy's love of résumé-driven-development coupled with his fear of being replaced by one of Steve's friends if he didn't use every single thing he ever learned in CS clown college. Verily, Millennials took much from his tutelage.
 
