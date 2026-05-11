@@ -8,11 +8,11 @@ from ordered_set import OrderedSet
 from PyObjCTools import AppHelper
 from rich import print
 
-DNS_KEY_PATTERN = ".*DNS"
 IS_IP_ADDRESS = re.compile(r"^(((?!25?[6-9])[12]\d|[1-9])?\d\.?\b){4}$", re.IGNORECASE)
 
+DNS_KEY_PATTERN = ".*DNS"
 SINGLE_SERVER_KEY = "ServerAddress"
-SERVERS_KEY = "ServerAddresses"
+MULTIPLE_SERVERS_KEY = "ServerAddresses"
 
 # I have no idea what these are for but they aren't
 # useful dictionaries.
@@ -44,7 +44,7 @@ def main(preferred_servers: list[str]):
         # part of an IPv4 address.
         preferred_servers[i] = re.sub(r"[^0-9\.]", "", server)
         if not IS_IP_ADDRESS.match(preferred_servers[i]):
-            print(f"'{preferred_servers[i]}' is not an IPv4 address.")
+            print(f"[red]'{preferred_servers[i]}' is not an IPv4 address.[/red]")
             raise typer.Abort()
 
     valid_servers = OrderedSet(preferred_servers)
@@ -58,7 +58,7 @@ def main(preferred_servers: list[str]):
             value = SystemConfiguration.SCDynamicStoreCopyValue(store, key)
 
             try:
-                stored_servers = value.get(SERVERS_KEY, None)
+                stored_servers = value.get(MULTIPLE_SERVERS_KEY, None)
 
                 if stored_servers is None:
                     stored_servers = [value.get(SINGLE_SERVER_KEY, None)]
@@ -70,7 +70,7 @@ def main(preferred_servers: list[str]):
 
                     new_value = dict(value)
                     new_value.pop(SINGLE_SERVER_KEY, None)
-                    new_value[SERVERS_KEY] = list(valid_servers)
+                    new_value[MULTIPLE_SERVERS_KEY] = list(valid_servers)
 
                     if not SystemConfiguration.SCDynamicStoreSetValue(
                         store, key, new_value
