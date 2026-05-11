@@ -1,4 +1,4 @@
-# DNS Guard
+# DNSGuard
 
 Most operating systems with TCP/IP support baked right into the crust realize that DNS is of such critical importance to everything else in the stack that a single, unambiguous source of truth is a hard requirement for keeping track of name resolvers. Almost 30 years ago, some lonely little boy with a chip on his shoulder at Apple decided that this wasn't complicated enough so he invented the "**System Configuration**" K/V store which curates a potentially endless number of sources of truth in an extremely opaque, poorly-documented way, clumsily backporting its many conflicting, concurrent states into `/etc/resolv.conf` for compatibility with all the tools that do not give a shit what Apple thinks is shippable.
 
