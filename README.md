@@ -30,6 +30,14 @@ Note that `pyobjc` is **HUGE**
 
 This stupid trick only works with escalated privileges. Sorry.
 
-`sudo dnsguard 192.168.1.2, 9.9.9.9, 1.1.1.1`
+```
+sudo dnsguard 192.168.192.108, 1.1.1.1, 9.9.9.9
+```
+```
+Password: ****
+State:/Network/Service/1B48DC4B-2BF3-4097-A936-3FBDF6903D23/DNS is in compliance.
+State:/Network/Global/DNS is in compliance.
+Watching the store for changes...
+```
 
 
