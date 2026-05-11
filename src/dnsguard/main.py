@@ -41,6 +41,8 @@ def main(preferred_servers: list[str]):
 
         sudo dnsguard 192.168.1.2, 9.9.9.9, 1.1.1.1
     """
+    bad_servers = []
+
     for i, server in enumerate(preferred_servers):
         # Typer doesn't offer much in the way of input validation
         # and it wants lists to be space-delimited, which is hard
@@ -50,9 +52,10 @@ def main(preferred_servers: list[str]):
         # part of an IPv4 address.
         preferred_servers[i] = re.sub(r"[^0-9.]", "", server)
         if not IS_IP_ADDRESS.match(preferred_servers[i]):
-            raise typer.BadParameter(
-                f"Sanitized value '{preferred_servers[i]}' is not a valid IPv4 address."
-            )
+            bad_servers.append(preferred_servers[i])
+
+    if len(bad_servers) != 0:
+        raise typer.BadParameter(f"Invalid IPv4 addresses specified: `{bad_servers}`")
 
     valid_servers = OrderedSet(preferred_servers)
 
