@@ -14,7 +14,7 @@ The results of this architectural choice have yielded no tangible benefit to any
 
 # I'm Real Tired, Hoss
 
-DNSGuard's purpose is to serve as a cast iron middle finger you can shove up Johnny Applequeef's diabetic ass whenever you get tired of deciphering what `scutil` says and just want **one specific set of nameservers consulted at all times on all interfaces.** It does this by watching all of the DNS-related keys in the **System Configuration** data store for changes[^2]. When one occurrs that brings the list of active resolvers out of compliance with your wishes it snaps it back in line by force. No mercy. 
+DNSGuard's purpose is to serve as a cast iron middle finger you can shove up Johnny Applequeef's diabetic ass whenever you get tired of deciphering what `scutil` says and just want <ins>***one specific set of nameservers consulted at ALL times on ALL interfaces.***</ins> It does this by watching all of the DNS-related keys in the **System Configuration** data store for changes[^2]. When one occurrs that brings the list of active resolvers out of compliance with your wishes it snaps it back in line by force. No mercy. 
 
 [^2]: Apple has recently exposed a new app extension interface which lets you write your own **DNS Proxy** capable of diverting all DNS traffic to one specific location. This would probably be a much better way of accomplishing things than my approach here, but you can't even build a **DNS Proxy** extension without joining their paid developer program so fuck them.
 
