@@ -18,7 +18,7 @@ DNSGuard's purpose is to serve as a cast iron middle finger you can shove up Joh
 
 [^2]: Apple has recently exposed a new app extension interface which lets you write your own **DNS Proxy** capable of diverting all DNS traffic to one specific location. This would probably be a much better way of accomplishing things than my approach here, but you can't even build a **DNS Proxy** extension without joining their paid developer program so fuck them.
 
-This will *definitely* leave your **System Settings** UI out of sync and there is tremendous potential for competition with some other piece of software's attempt to do the exact same thing in which case you'd have two or more **System Configuration** observers repeatedly flipping the same switches back and forth over and over ad infinitum. For this reason, most normal people should never even attempt to run this tool. If you want to do it anyway, here it is. Add it to `launchd` if you want it to run all the time. 
+This will *definitely* leave your **System Settings** UI out of sync (just as you've doubtlessly seen VPN clients do) and there is tremendous potential for competition with some other piece of software's attempt to do the exact same thing in which case you'd have two or more **System Configuration** observers repeatedly flipping the same switches back and forth over and over ad infinitum. For this reason, most normal people should never even attempt to run this tool. If you want to do it anyway, here it is. Add it to `launchd` if you want it to run all the time. 
 
 # Installation
 
