@@ -50,12 +50,13 @@ def main(preferred_servers: list[str]):
 
         # Strip commas and anything else that isn't
         # part of an IPv4 address.
+        unsanitized_server = str(preferred_servers[i])
         preferred_servers[i] = re.sub(r"[^0-9.]", "", server)
         if not IS_IP_ADDRESS.match(preferred_servers[i]):
-            bad_servers.append(preferred_servers[i])
+            bad_servers.append(unsanitized_server)
 
     if len(bad_servers) != 0:
-        raise typer.BadParameter(f"Invalid IPv4 addresses specified: `{bad_servers}`")
+        raise typer.BadParameter(f"Bogus IPv4 addresses specified: `{bad_servers}`")
 
     valid_servers = OrderedSet(preferred_servers)
 
