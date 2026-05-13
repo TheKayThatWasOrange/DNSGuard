@@ -21,12 +21,13 @@ KEYS_TO_IGNORE = ("State:/Network/MulticastDNS", "State:/Network/PrivateDNS")
 app = typer.Typer(pretty_exceptions_show_locals=True)
 
 class SCException(RuntimeError):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.error_code = SystemConfiguration.SCError()
+        self.message = SystemConfiguration.SCErrorString(self.error_code)
 
-def dump_sc_error() -> str:
-    error = SystemConfiguration.SCError()
-    error_string = SystemConfiguration.SCErrorString(error)
-    return error_string
+    def __str__(self):
+        return f"{self.message} (Error Code: {self.error_code})"
 
 
 @app.command()
@@ -50,7 +51,7 @@ def main(preferred_servers: list[str]):
 
         # Strip commas and anything else that isn't
         # part of an IPv4 address.
-        unsanitized_server = str(preferred_servers[i])
+        unsanitized_server = str(server)
         preferred_servers[i] = re.sub(r"[^0-9.]", "", server)
         if not IS_IP_ADDRESS.match(preferred_servers[i]):
             bad_servers.append(unsanitized_server)
@@ -89,8 +90,8 @@ def main(preferred_servers: list[str]):
                         raise SCException()
                 else:
                     print(f"[green]{key} is in compliance.[/green]")
-            except SCException:
-                print(f"[red]\n\nOPERATION FAILED: {dump_sc_error()}[/red]\n\n")
+            except SCException as e:
+                print(f"[red]\n\nOPERATION FAILED: {e}[/red]\n\n")
             except AttributeError:
                 # Apple doesn't like to follow their own schemas and
                 # there are always at least two outliers which have
@@ -112,24 +113,29 @@ def main(preferred_servers: list[str]):
     # without waiting around for something to change.
     compliance_enforcer(store, dns_related_keys)
 
-    # Then start watching all present (and future) keys for changes.
-    if SystemConfiguration.SCDynamicStoreSetNotificationKeys(
-        store, None, [DNS_KEY_PATTERN]
-    ):
+    try:
+        # Then start watching all present (and future) keys for changes.
+        if not SystemConfiguration.SCDynamicStoreSetNotificationKeys(
+            store, None, [DNS_KEY_PATTERN]
+        ):
+            raise SCException()
+
         # dispatch_queue_create() does not seem to be usable at all.
         # Grab the main queue instead since we don't actually have
         # anything better to do in our run loop.
         dispatch_queue = dispatch.dispatch_get_main_queue()
 
-        if SystemConfiguration.SCDynamicStoreSetDispatchQueue(store, dispatch_queue):
-            print("Watching the store for changes...")
-            # This handles keyboard input. dispatch_main() does not.
-            AppHelper.runConsoleEventLoop(installInterrupt=True)
-        else:
-            print(f"[red]{dump_sc_error()}[/red]")
-            raise typer.Abort()
-    else:
-        print(f"[red]{dump_sc_error()}[/red]")
+        if not SystemConfiguration.SCDynamicStoreSetDispatchQueue(
+            store, dispatch_queue
+        ):
+            raise SCException()
+
+        print("Watching the store for changes...")
+        # This handles keyboard input. dispatch_main() does not.
+        AppHelper.runConsoleEventLoop(installInterrupt=True)
+
+    except SCException as e:
+        print(f"[red]{e}[/red]")
         raise typer.Abort()
 
 
