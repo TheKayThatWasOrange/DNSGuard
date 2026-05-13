@@ -91,7 +91,11 @@ def main(preferred_servers: list[str]):
                 else:
                     print(f"[green]{key} is in compliance.[/green]")
             except SCException as e:
-                print(f"[red]\n\nOPERATION FAILED: {e}[/red]\n\n")
+                if e.error_code == 1003:
+                    print("[red]DNSGuard requires superuser privileges.[/red]")
+                    raise typer.Abort()
+                else:
+                    print(f"[red]\n\nOPERATION FAILED: {e}[/red]\n\n")
             except AttributeError:
                 # Apple doesn't like to follow their own schemas and
                 # there are always at least two outliers which have
